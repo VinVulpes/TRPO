@@ -18,7 +18,7 @@ class FILEDB{
     int write(KeyType key, ValType value);
     ValType read_one(KeyType key);
     std::map<KeyType,ValType>* read_all();
-    ValType erase(KeyType key);
+    int erase(KeyType key);
     private:
     std::string dbfilename;
 };

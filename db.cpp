@@ -47,6 +47,28 @@ std::map<KeyType,ValType>* FILEDB<KeyType, ValType>::read_all(){
     return res;
 }
 template<typename KeyType, typename ValType>
+int FILEDB<KeyType, ValType>::erase(KeyType key){
+    std::fstream ofile;
+    std::map<KeyType,ValType>* res = this->read_all();
+    ofile.open(this->dbfilename, std::ios::out); 
+    // ofile.open(this->dbfilename, std::ios::app | std::ios::out); 
+    if(!ofile){
+        std::cout<<strerror(errno)<< " ";
+        return -1;
+    }
+    for(auto [ikey,ival]: *res){
+        if (key != ikey)
+        ofile << std::string(ikey) << "=" << std::string(ival) << std::endl;                        
+    }
+    delete res;
+    if(ofile.bad()){
+        return -1;
+    }
+    ofile.close();
+
+    return 0;
+}
+template<typename KeyType, typename ValType>
 FILEDB<KeyType, ValType>::FILEDB(){
     this->dbfilename = "db.txt";
 }

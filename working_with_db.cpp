@@ -43,7 +43,16 @@ int main()
         }
         else{
             cout<<"500";
-
+        }
+    }
+    std::string eraseparam = string(http.httpGet("erase"));
+    if(eraseparam != ""){
+        int res = db.erase(eraseparam);
+        if(res == 0){
+            cout<<"201 OK";
+        }
+        else{
+            cout<<"500";
         }
     }
 
