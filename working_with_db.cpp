@@ -21,6 +21,7 @@ int main()
         }
     }
     if(getallparam != ""){
+        
         std::map<string,string> *res = db.read_all();
         cout<<"{";
         int i = 0;
