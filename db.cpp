@@ -2,6 +2,7 @@
 #define __DB__CPP__CLASS__
 #include "db.hpp"
 #include <fstream>
+#include <errno.h>
 template<typename KeyType, typename ValType>
 ValType FILEDB<KeyType, ValType>::read_one(KeyType key){
     std::ifstream ifile(this->dbfilename);
@@ -9,10 +10,29 @@ ValType FILEDB<KeyType, ValType>::read_one(KeyType key){
     while (std::getline( ifile, ikey, '=' )) {
         std::getline( ifile, ival);
         if (std::string(key) == ikey){
+            ifile.close();
             return ValType(ival);
         }
     }
+    ifile.close();
     return "";
+}
+template<typename KeyType, typename ValType>
+int FILEDB<KeyType, ValType>::write(KeyType key, ValType value){
+    std::ofstream ofile;
+    ofile.open(this->dbfilename, std::ios::app); 
+    // ofile.open(this->dbfilename, std::ios::app | std::ios::out); 
+    if(!ofile){
+        std::cout<<strerror(errno)<< " ";
+        return -1;
+    }
+    ofile << std::endl << std::string(key) << "=" << std::string(value);                        
+    if(ofile.bad()){
+        return -1;
+    }
+    ofile.close();
+
+    return 0;
 }
 template<typename KeyType, typename ValType>
 std::map<KeyType,ValType>* FILEDB<KeyType, ValType>::read_all(){
@@ -23,6 +43,7 @@ std::map<KeyType,ValType>* FILEDB<KeyType, ValType>::read_all(){
         std::getline( ifile, ival);
         (*res)[ikey]=ival;
     }
+    ifile.close();
     return res;
 }
 template<typename KeyType, typename ValType>

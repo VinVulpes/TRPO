@@ -2,3 +2,4 @@ name=value
 int=15
 test=data
 test2=data2
+val=10
