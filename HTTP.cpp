@@ -1,3 +1,5 @@
+#ifndef __HTTP_CPP_CLASS__
+#define __HTTP_CPP_CLASS__
 #include <iostream>
 #include <vector>
 #include <string>
@@ -7,7 +9,6 @@
 #include <map>
 #include <sstream>
 #include "HTTP.hpp"
-
 std::string & ltrim(std::string & str)
 {
   if(*str.begin()==' '){
@@ -90,3 +91,4 @@ HTTP::~HTTP(){
     return;
 }
 
+#endif

@@ -2,3 +2,4 @@ desktop.ini
 *.cgi
 watchexec.sh
 *.o
+/.vscode
