@@ -1,9 +1,10 @@
+#ifndef __HTTP_HPP_CLASS__
+#define __HTTP_HPP_CLASS__
 #include <iostream>
 #include <vector>
 #include <string>
 #include <cstring>
 #include <map>
-
 class HTTP
 {
     public:
@@ -27,3 +28,4 @@ class HTTP
    //private:
 	
 };
+#endif

@@ -1,0 +1,4 @@
+name=value
+int=15
+test=data
+test2=data2
