@@ -1,0 +1,3 @@
+docker run -p 80:80 -v "$((pwd).path -replace '\\', '/'):/var/www/html/test" -it nomiram/ubuntu-apache2:v1 /bin/bash -c "/etc/init.d/apache2 start & /bin/bash"
+---
+watch -d -t -g ls -lR && echo "1,2,3"
