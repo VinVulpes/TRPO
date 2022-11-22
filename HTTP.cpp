@@ -6,6 +6,7 @@
 #include <cstring>
 #include <iterator>
 #include <sstream> 
+#include <fstream> 
 #include <map>
 #include <sstream>
 #include "HTTP.hpp"
@@ -63,8 +64,8 @@ return;
 HTTP::HTTP(){
     
     std::stringstream getstrstm(getenv("QUERY_STRING"));
-    char postdata[2000]; 
-    std::cin.getline(postdata,2000);
+    std::string postdata; 
+    std::getline(std::cin,postdata,char(0));
     std::stringstream poststrstm(postdata);
     auto key = std::string{};
     auto val = std::string{};
@@ -87,6 +88,20 @@ HTTP::HTTP(){
     }
     return;
 }
+
+int HTTP::httpSendFile(std::string name){
+    std::ifstream ifile;
+    ifile.open(name, std::ios::in); 
+    if(!ifile){
+        return -1;
+    }
+    std::string str;
+    while (std::getline(ifile, str,'\n')) {
+        std::cout<<str<<std::endl;
+    }
+    return 0;
+}
+
 HTTP::~HTTP(){
     return;
 }

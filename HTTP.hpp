@@ -20,6 +20,7 @@ class HTTP
 	void init();
 	void send();
     HTTP(std::string query, std::string postdata);
+	int httpSendFile(std::string name);
 	std::string httpGet(std::string name);
 	std::string httpPost(std::string name);
 	std::string getCookie(std::string name);

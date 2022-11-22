@@ -14,6 +14,7 @@ int main()
     FILEDB<std::string,std::string> db;
     std::string getparam = string(http.httpGet("get"));
     std::string getallparam = string(http.httpGet("getall"));
+    http.httpSendFile("db.html");
     if(getparam != ""){
         http.setCookie("get",getparam);
         std::string res = db.read_one(getparam);
@@ -22,7 +23,6 @@ int main()
         }
     }
     if(getallparam != ""){
-
         std::map<string,string> *res = db.read_all();
         cout<<"{";
         int i = 0;
@@ -35,17 +35,17 @@ int main()
         }
         cout<<"}";
     }
-    std::string setparam = string(http.httpGet("set"));
+    std::string setparam = string(http.httpPost("set"));
     if(setparam != ""){
-        int res = db.write(setparam,string(http.httpGet("value")));
+        int res = db.write(setparam,string(http.httpPost("value")));
         if(res == 0){
             cout<<"201 OK";
         }
         else{
-            cout<<"500";
+            cout<<"500 Server Error";
         }
     }
-    std::string eraseparam = string(http.httpGet("erase"));
+    std::string eraseparam = string(http.httpPost("erase"));
     if(eraseparam != ""){
         int res = db.erase(eraseparam);
         if(res == 0){
