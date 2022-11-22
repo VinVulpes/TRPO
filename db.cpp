@@ -26,8 +26,13 @@ int FILEDB<KeyType, ValType>::write(KeyType key, ValType value){
         std::cout<<strerror(errno)<< " ";
         return -1;
     }
+    if (this->read_one(key) != ValType()){
+        ofile.close();
+        return -1;
+    }
     ofile << std::endl << std::string(key) << "=" << std::string(value);                        
     if(ofile.bad()){
+        ofile.close();
         return -1;
     }
     ofile.close();
