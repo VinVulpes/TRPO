@@ -21,7 +21,6 @@ template<typename KeyType, typename ValType>
 int FILEDB<KeyType, ValType>::write(KeyType key, ValType value){
     std::ofstream ofile;
     ofile.open(this->dbfilename, std::ios::app); 
-    // ofile.open(this->dbfilename, std::ios::app | std::ios::out); 
     if(!ofile){
         std::cout<<strerror(errno)<< " ";
         return -1;
@@ -54,13 +53,14 @@ std::map<KeyType,ValType>* FILEDB<KeyType, ValType>::read_all(){
 template<typename KeyType, typename ValType>
 int FILEDB<KeyType, ValType>::erase(KeyType key){
     std::fstream ofile;
+    //get all keys from file
     std::map<KeyType,ValType>* res = this->read_all();
     ofile.open(this->dbfilename, std::ios::out); 
-    // ofile.open(this->dbfilename, std::ios::app | std::ios::out); 
     if(!ofile){
         std::cout<<strerror(errno)<< " ";
         return -1;
     }
+    // Write all keys to file exept "key"
     for(auto [ikey,ival]: *res){
         if (key != ikey)
         ofile << std::string(ikey) << "=" << std::string(ival) << std::endl;                        
