@@ -1,15 +1,15 @@
 #ifndef __DB__CPP__CLASS__
 #define __DB__CPP__CLASS__
 #include "db.hpp"
-#include <fstream>
 #include <errno.h>
+#include <fstream>
 template<typename KeyType, typename ValType>
-ValType FILEDB<KeyType, ValType>::read_one(KeyType key){
+ValType FILEDB<KeyType, ValType>::read_one(KeyType key) {
     std::ifstream ifile(this->dbfilename);
     std::string ikey, ival;
-    while (std::getline( ifile, ikey, '=' )) {
-        std::getline( ifile, ival);
-        if (std::string(key) == ikey){
+    while (std::getline(ifile, ikey, '=')) {
+        std::getline(ifile, ival);
+        if (std::string(key) == ikey) {
             ifile.close();
             return ValType(ival);
         }
@@ -18,19 +18,19 @@ ValType FILEDB<KeyType, ValType>::read_one(KeyType key){
     return "";
 }
 template<typename KeyType, typename ValType>
-int FILEDB<KeyType, ValType>::write(KeyType key, ValType value){
+int FILEDB<KeyType, ValType>::write(KeyType key, ValType value) {
     std::ofstream ofile;
-    ofile.open(this->dbfilename, std::ios::app); 
-    if(!ofile){
-        std::cout<<strerror(errno)<< " ";
+    ofile.open(this->dbfilename, std::ios::app);
+    if (!ofile) {
+        std::cout << strerror(errno) << " ";
         return -1;
     }
-    if (this->read_one(key) != ValType()){
+    if (this->read_one(key) != ValType()) {
         ofile.close();
         return -1;
     }
-    ofile << std::endl << std::string(key) << "=" << std::string(value);                        
-    if(ofile.bad()){
+    ofile << std::endl << std::string(key) << "=" << std::string(value);
+    if (ofile.bad()) {
         ofile.close();
         return -1;
     }
@@ -39,34 +39,34 @@ int FILEDB<KeyType, ValType>::write(KeyType key, ValType value){
     return 0;
 }
 template<typename KeyType, typename ValType>
-std::map<KeyType,ValType>* FILEDB<KeyType, ValType>::read_all(){
-    std::map<KeyType,ValType> *res = new std::map<KeyType,ValType>;
+std::map<KeyType, ValType>* FILEDB<KeyType, ValType>::read_all() {
+    std::map<KeyType, ValType> *res = new std::map<KeyType, ValType>;
     std::ifstream ifile(this->dbfilename);
     std::string ikey, ival;
-    while (std::getline( ifile, ikey, '=' )) {
-        std::getline( ifile, ival);
-        (*res)[ikey]=ival;
+    while (std::getline(ifile, ikey, '=')) {
+        std::getline(ifile, ival);
+        (*res)[ikey] = ival;
     }
     ifile.close();
     return res;
 }
 template<typename KeyType, typename ValType>
-int FILEDB<KeyType, ValType>::erase(KeyType key){
+int FILEDB<KeyType, ValType>::erase(KeyType key) {
     std::fstream ofile;
-    //get all keys from file
-    std::map<KeyType,ValType>* res = this->read_all();
-    ofile.open(this->dbfilename, std::ios::out); 
-    if(!ofile){
-        std::cout<<strerror(errno)<< " ";
+    // get all keys from file
+    std::map<KeyType, ValType>* res = this->read_all();
+    ofile.open(this->dbfilename, std::ios::out);
+    if (!ofile) {
+        std::cout << strerror(errno) << " ";
         return -1;
     }
     // Write all keys to file exept "key"
-    for(auto [ikey,ival]: *res){
+    for (auto [ ikey, ival ] : *res) {
         if (key != ikey)
-        ofile << std::string(ikey) << "=" << std::string(ival) << std::endl;                        
+        ofile << std::string(ikey) << "=" << std::string(ival) << std::endl;
     }
     delete res;
-    if(ofile.bad()){
+    if (ofile.bad()) {
         return -1;
     }
     ofile.close();
@@ -74,11 +74,11 @@ int FILEDB<KeyType, ValType>::erase(KeyType key){
     return 0;
 }
 template<typename KeyType, typename ValType>
-FILEDB<KeyType, ValType>::FILEDB(){
+FILEDB<KeyType, ValType>::FILEDB() {
     this->dbfilename = "db.txt";
 }
 template<typename KeyType, typename ValType>
-FILEDB<KeyType, ValType>::~FILEDB(){
+FILEDB<KeyType, ValType>::~FILEDB() {
     return;
 }
 

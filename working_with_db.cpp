@@ -11,51 +11,47 @@ int main()
 {
     HTTP http;
     http.init();
-    FILEDB<std::string,std::string> db;
+    FILEDB<std::string, std::string> db;
     std::string getparam = string(http.httpGet("get"));
     std::string getallparam = string(http.httpGet("getall"));
     http.httpSendFile("db.html");
-    if(getparam != ""){
-        http.setCookie("get",getparam);
+    if (getparam != ""){
+        http.setCookie("get", getparam);
         std::string res = db.read_one(getparam);
-        if(res != ""){
-            cout <<"{ \""<<getparam<<"\": \""<< res <<"\"}";
+        if (res != ""){
+            cout <<"{ \"" << getparam << "\": \"" << res << "\"}";
         }
     }
-    if(getallparam != ""){
-        std::map<string,string> *res = db.read_all();
-        cout<<"{";
+    if (getallparam != ""){
+        std::map<string, string> *res = db.read_all();
+        cout << "{";
         int i = 0;
-        for(auto [key,val]: *res){
-            if(i>0){
-                cout<<", ";
+        for (auto [key, val] : *res){
+            if (i > 0){
+                cout << ", ";
             }
-            cout <<"\""<<key<<"\": \""<< val <<"\"";
+            cout << "\"" << key << "\": \"" << val << "\"";
             i++;
         }
-        cout<<"}";
+        cout << "}";
     }
     std::string setparam = string(http.httpPost("set"));
-    if(setparam != ""){
-        int res = db.write(setparam,string(http.httpPost("value")));
-        if(res == 0){
-            cout<<"201 OK";
-        }
-        else{
-            cout<<"500 Server Error";
+    if (setparam != ""){
+        int res = db.write(setparam, string(http.httpPost("value")));
+        if (res == 0){
+            cout << "201 OK";
+        }else{
+            cout << "500 Server Error";
         }
     }
     std::string eraseparam = string(http.httpPost("erase"));
-    if(eraseparam != ""){
+    if (eraseparam != ""){
         int res = db.erase(eraseparam);
-        if(res == 0){
-            cout<<"201 OK";
-        }
-        else{
-            cout<<"500";
+        if (res == 0){
+            cout << "201 OK";
+        }else{
+            cout << "500";
         }
     }
-
-    
     http.send();
 }

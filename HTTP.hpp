@@ -8,18 +8,18 @@
 class HTTP
 {
     public:
-    std::map<std::string,std::string> getparams;
-    std::map<std::string,std::string> postparams;
-    std::map<std::string,std::string> cookie;
-    std::map<std::string,std::string> outcookie;
+    std::map<std::string, std::string> getparams;
+    std::map<std::string, std::string> postparams;
+    std::map<std::string, std::string> cookie;
+    std::map<std::string, std::string> outcookie;
 	private:
 	std::stringstream OUT;
 
 	public:
 	HTTP();
-	//Redirecting cout stream to string stream
+	// Redirecting cout stream to string stream
 	void init();
-	//Send headers, cookie and user set data
+	// Send headers, cookie and user set data
 	void send();
     HTTP(std::string query, std::string postdata);
 
