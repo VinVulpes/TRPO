@@ -37,6 +37,7 @@ int main()
     }
     std::string setparam = string(http.httpPost("set"));
     if (setparam != ""){
+        http.setCookie("get", setparam);
         int res = db.write(setparam, string(http.httpPost("value")));
         if (res == 0){
             cout << "201 OK";

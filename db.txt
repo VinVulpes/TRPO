@@ -1,5 +1,7 @@
+int=1
+key2=value2
+key3=2
 name=value
-int=15
 test=data
 test2=data2
 val=10

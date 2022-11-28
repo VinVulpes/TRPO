@@ -6,8 +6,14 @@
 template<typename KeyType, typename ValType>
 ValType FILEDB<KeyType, ValType>::read_one(KeyType key) {
     std::ifstream ifile(this->dbfilename);
-    std::string ikey, ival;
+    std::string ikey, ival, nstr;
     while (std::getline(ifile, ikey, '=')) {
+        if (ikey[0] == '\n'){
+            ikey.erase(ikey.begin());
+        }
+        // std::strstream strs(nstr);
+        // strstr
+        // strstr = std::strstream(nstr);
         std::getline(ifile, ival);
         if (std::string(key) == ikey) {
             ifile.close();
@@ -44,6 +50,9 @@ std::map<KeyType, ValType>* FILEDB<KeyType, ValType>::read_all() {
     std::ifstream ifile(this->dbfilename);
     std::string ikey, ival;
     while (std::getline(ifile, ikey, '=')) {
+        if (ikey[0] == '\n'){
+            ikey.erase(ikey.begin());
+        }
         std::getline(ifile, ival);
         (*res)[ikey] = ival;
     }
@@ -62,8 +71,10 @@ int FILEDB<KeyType, ValType>::erase(KeyType key) {
     }
     // Write all keys to file exept "key"
     for (auto [ ikey, ival ] : *res) {
-        if (key != ikey)
-        ofile << std::string(ikey) << "=" << std::string(ival) << std::endl;
+        if (key != ikey){
+            std::cout << ikey << ": " << ival << "<br>";
+            ofile << std::string(ikey) << "=" << std::string(ival) << std::endl;
+        }
     }
     delete res;
     if (ofile.bad()) {
