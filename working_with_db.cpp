@@ -53,7 +53,7 @@ int main()
         if (res == 0){
             cout << "{\"status\": [201, \"OK\"]}";
         }else{
-            cout << "{\"status\": [500, \"Key not found\"]}";
+            cout << "{\"status\": [500, \"Server Error\"]}";
         }
     }
     http.send();
