@@ -72,7 +72,9 @@ int FILEDB<KeyType, ValType>::erase(KeyType key) {
     // Write all keys to file exept "key"
     for (auto [ ikey, ival ] : *res) {
         if (key != ikey){
-            std::cout << ikey << ": " << ival << "<br>";
+            #ifdef DEBUG
+            std::cout << ikey << ": " << ival << "<br>"; //DEBUG
+            #endif
             ofile << std::string(ikey) << "=" << std::string(ival) << std::endl;
         }
     }
