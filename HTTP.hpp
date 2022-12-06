@@ -14,7 +14,7 @@ class HTTP
     std::map<std::string, std::string> outcookie;
 	private:
 	std::map<std::string, std::string> escape = {
-		{"\"","&quot;"}, {"&","&amp;"}, {"<","&lt;"}, {">","&gt;"}
+		{"\"","&quot;"}, {"<","&lt;"}, {">","&gt;"}
 		};
 	std::stringstream OUT;
 
