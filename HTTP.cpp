@@ -19,6 +19,22 @@ std::string & ltrim(std::string * str)
   }
   return *str;
 }
+std::string ReplaceAll(std::string str, const std::string& from, const std::string& to) {
+    size_t start_pos = 0;
+    while((start_pos = str.find(from, start_pos)) != std::string::npos) {
+        str.replace(start_pos, from.length(), to);
+        start_pos += to.length();
+    }
+    return str;
+}
+std::string HTTP::escaping(std::string str)
+{
+    // for()
+    for (auto [key, val] : this->escape){
+        str = ReplaceAll(str,key,val);
+    }
+    return str;
+}
 std::string HTTP::httpGet(std::string name){
     return this->getparams[name];
 }
@@ -41,12 +57,9 @@ void HTTP::send(){
     fprintf(stdout, "Content-Type: text/html; charset=utf-8\n");
     // set cookie
     fprintf(stdout, "Set-Cookie: ");
-
-        // fprintf(stdout, "Set-Cookie: key=%li; ", this->outcookie.size());
     for (const auto& [key, value] : this->outcookie){
         fprintf(stdout, "%s=%s; ", key.c_str(), value.c_str());
     }
-
     fprintf(stdout, "\n\n");
     // output recorded cout
     fprintf(stdout, "%s", OUT.str().c_str());
@@ -60,6 +73,8 @@ HTTP::HTTP(std::string query, std::string postdata){
 
     while (std::getline(getstrstm, key, '=')) {
         std::getline(getstrstm, val, '&');
+        key = escaping(key);
+        val = escaping(val);
         this->getparams[key] = val;
     }
     while (std::getline(poststrstm, key, '=' )) {
@@ -92,6 +107,8 @@ HTTP::HTTP(){
         while (std::getline(cookiestrstm, key, '=')) {
             std::getline(cookiestrstm, val, ';');
             key = ltrim(&key);
+            key = escaping(key);
+            val = escaping(val);
             this->cookie[key] = val;
         }
     }

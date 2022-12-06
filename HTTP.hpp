@@ -13,16 +13,20 @@ class HTTP
     std::map<std::string, std::string> cookie;
     std::map<std::string, std::string> outcookie;
 	private:
+	std::map<std::string, std::string> escape = {
+		{"\"","&quot;"}, {"&","&amp;"}, {"<","&lt;"}, {">","&gt;"}
+		};
 	std::stringstream OUT;
 
 	public:
 	HTTP();
+    HTTP(std::string query, std::string postdata);
 	// Redirecting cout stream to string stream
 	void init();
 	// Send headers, cookie and user set data
 	void send();
-    HTTP(std::string query, std::string postdata);
-
+	//replace e
+	std::string escaping(std::string str);
 	/*Send data from file to cout stream
 	return 0: OK; -1: failure*/
 	int httpSendFile(std::string name);

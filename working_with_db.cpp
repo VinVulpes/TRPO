@@ -21,7 +21,7 @@ int main()
         http.setCookie("get", getparam);
         std::string res = db.read_one(getparam);
         if (res != ""){
-            cout <<"{ \"" << getparam << "\": \"" << res << "\"}";
+            cout <<"{ \"" << getparam << "\": \"" <<http.escaping(res) << "\"}";
         }
     }
     if (getallparam != ""){
@@ -32,7 +32,7 @@ int main()
             if (i > 0){
                 cout << ", ";
             }
-            cout << "\"" << key << "\": \"" << val << "\"";
+            cout << "\"" << http.escaping(key) << "\": \"" << http.escaping(val) << "\"";
             i++;
         }
         cout << "}";
