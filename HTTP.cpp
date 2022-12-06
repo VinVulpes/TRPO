@@ -17,6 +17,10 @@ std::string & ltrim(std::string * str)
   if (*((*str).begin()) == ' '){
   (*str).erase((*str).begin());
   }
+  if ((*((*str).end()-1) == '\n') or (*((*str).end()-1) == ' ')){
+  (*str).erase((*str).end()-1);
+    // (*str).pop_back();
+  }
   return *str;
 }
 std::string ReplaceAll(std::string str, const std::string& from, const std::string& to) {
