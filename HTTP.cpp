@@ -135,4 +135,56 @@ HTTP::~HTTP(){
     return;
 }
 
+std::string HTTP::rawURLDecode(std::string str)
+{
+  std::string res = "";
+  //cout << str.length () << endl;
+  for (int i = 0; i < str.length (); i++)
+    {
+
+      if (str[i] != '%')
+	{
+	  res.append (1, str[i]);
+	  //cout <<"0: " << res.back()<<endl;
+	}
+      if (str[i] == '%')
+	{
+	  i++; //skip '%'
+	  //G cout <<": " << hex << CCtoI(str[i],str[i + 1]) << endl;
+	  if (CCtoI(str[i],str[i + 1]) < 127)
+	    {
+	      res.append(1, char(CCtoI(str[i],str[i + 1])));
+	      //cout <<"1: " << res.back()<<endl;
+	      i++; //skip one hex (other hex will be skiped by i++ in for)
+	      continue;
+	    }
+	    //cout <<"t "<<(CCtoI(str[i],str[i + 1])&0b11100000)<<"\n";
+	  if ((CCtoI(str[i],str[i + 1])&0b11100000) == 0b11000000)
+	    {
+	      
+	      res.append(1, char(CCtoI(str[i],str[i + 1])));
+	      i = i+3; //skip (XX%): 2 hex numbers and '%' 
+	      res.append(1, char(CCtoI(str[i],str[i + 1])));
+	      i++; //skip one hex (other hex will be skiped by i++ in for)
+	      continue;
+	    }
+	}
+    }
+  return res;
+}
+
+unsigned int HTTP::CtoI(char ch){
+    if(ch >= 'A'){
+	      return int(ch - 'A' + 10);
+	  }
+	  else{
+	      return int(ch - '0');
+	  }
+}
+
+unsigned int HTTP::CCtoI(char ch1, char ch2){
+    return ((CtoI(ch1)<<4) + CtoI(ch2));
+}
+
+
 #endif

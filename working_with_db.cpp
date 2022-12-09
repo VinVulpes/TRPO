@@ -12,7 +12,7 @@ int main()
     HTTP http;
     http.init();
     FILEDB<std::string, std::string> db;
-    std::string getparam = string(http.httpGet("get"));
+    std::string getparam = http.rawURLDecode(string(http.httpGet("get")));
     std::string getallparam = string(http.httpGet("getall"));
     if(http.httpGet("gui")!="false"){
         http.httpSendFile("db.html");
@@ -32,15 +32,15 @@ int main()
             if (i > 0){
                 cout << ", ";
             }
-            cout << "\"" << http.escaping(key) << "\": \"" << http.escaping(val) << "\"";
+            cout << "\"" << http.escaping(http.rawURLDecode(key)) << "\": \"" << http.escaping(http.rawURLDecode(val)) << "\"";
             i++;
         }
         cout << "}";
     }
     std::string setparam = string(http.httpPost("set"));
     if (setparam != ""){
-        http.setCookie("get", setparam);
-        int res = db.write(setparam, string(http.httpPost("value")));
+        http.setCookie("get", http.rawURLDecode(setparam));
+        int res = db.write(http.rawURLDecode(setparam), http.rawURLDecode(string(http.httpPost("value"))));
         if (res == 0){
             cout << "{\"status\": [201, \"OK\"]}";
         }else{
@@ -49,7 +49,7 @@ int main()
     }
     std::string eraseparam = string(http.httpPost("erase"));
     if (eraseparam != ""){
-        int res = db.erase(eraseparam);
+        int res = db.erase(http.rawURLDecode(eraseparam));
         if (res == 0){
             cout << "{\"status\": [201, \"OK\"]}";
         }else{

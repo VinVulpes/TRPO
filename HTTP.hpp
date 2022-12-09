@@ -21,6 +21,7 @@ class HTTP
 	public:
 	HTTP();
     HTTP(std::string query, std::string postdata);
+	~HTTP();
 	// Redirecting cout stream to string stream
 	void init();
 	// Send headers, cookie and user set data
@@ -36,6 +37,12 @@ class HTTP
 	std::string httpPost(std::string name);
 	std::string getCookie(std::string name);
 	std::string setCookie(std::string name, std::string value);
-	~HTTP();
+	// Convert "application/x-www-form-urlencoded" to utf-8 string
+	std::string rawURLDecode(std::string str);
+	private:
+	// Convert char (A-F,0-9) to int
+	unsigned int CtoI(char a);
+	// Convert two hex char numbers (XX) to int
+	unsigned int CCtoI(char ch1, char ch2);
 };
 #endif
