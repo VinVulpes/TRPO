@@ -1,7 +1,10 @@
-int=1
+key11=11
 key2=value2
 key3=2
 name=value
 test=data
 test2=data2
 val=10
+Привет=Александр
+<h1>a</h1>=aaaaa
+a=<h1>AAA</h1>
