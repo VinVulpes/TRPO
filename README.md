@@ -48,8 +48,8 @@
 
 #### Изменения:
 
-В Класс HTTP добавлена функция rawURLDecode:
+В Класс HTTP добавлен метод rawURLDecode:
 
 https://github.com/Nomiram/Cpp-CGI-apache2/blob/70ca72d5576be5f97e88675a14612f7de647d72f/HTTP.cpp#L138
 
-а так же некоторые служебные функции.
+а так же некоторые служебные методы.
