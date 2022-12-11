@@ -8,13 +8,22 @@
 class HTTP
 {
     public:
+	typedef struct {
+		std::string filename; 	// реальное имя файла
+		std::string type;	// MIME-тип файла
+		std::string tmp_name; // временное имя файла
+		int error; 	// код ошибки (0, если нет)
+		int size; 	// размер загружаемого файла
+	} UploadedFile;
+
     std::map<std::string, std::string> getparams;
     std::map<std::string, std::string> postparams;
     std::map<std::string, std::string> cookie;
     std::map<std::string, std::string> outcookie;
+	std::map <std::string, UploadedFile> filesData;
 	private:
 	std::map<std::string, std::string> escape = {
-		{"\"","&quot;"}, {"<","&lt;"}, {">","&gt;"}
+		{"\"","\\&quot;"}, {"<","&lt;"}, {">","&gt;"}
 		};
 	std::stringstream OUT;
 
@@ -39,6 +48,13 @@ class HTTP
 	std::string setCookie(std::string name, std::string value);
 	// Convert "application/x-www-form-urlencoded" to utf-8 string
 	std::string rawURLDecode(std::string str);
+	// возвращает значение HTTP-заголовка “name”
+	std::string getHeader(std::string name);
+	// возвращает свойства файла “name”
+	UploadedFile getFile(std::string name); 
+	// загружает файл “tmpFile” в директорию “path”
+	int move_uploaded_file(UploadedFile tmpFile, std::string path); 
+
 	private:
 	// Convert char (A-F,0-9) to int
 	unsigned int CtoI(char a);
