@@ -4,7 +4,7 @@ import os
 print("Content-Type: text/html; charset=utf-8\r\n\r\n")
 print()
 print('''
-<form action="pytest.cgi" method="POST" enctype="multipart/form-data">
+<form action="test.py" method="POST" enctype="multipart/form-data">
 	<input type="file" name="myFile1">
     <br>
     <br>
