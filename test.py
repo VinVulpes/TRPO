@@ -4,6 +4,8 @@ import os
 print("Content-Type: text/html; charset=utf-8\r\n\r\n")
 print()
 print('''
+<a href="./">Наверх</a>
+<p>Загрузите файлы, чтобы посмотреть как выглядит запрос</p>
 <form action="test.py" method="POST" enctype="multipart/form-data">
 	<input type="file" name="myFile1">
     <br>

@@ -1,15 +1,17 @@
 #!/usr/bin/python3
 import os
-
-
 print("Content-Type: text/html; charset=utf-8\r\n\r\n")
 print()
+print()
+print()
+print("<a href='./'>Up</a><br>")
+# exit()
 FILESPATH = './usrfiles'
 os.chdir(FILESPATH)
 files = [f for f in os.listdir('.') if os.path.isfile(f)]
 if os.getenv("REQUEST_METHOD").lower() == 'post':
     file = input().split('=')[1]
-    print("FILE: ", file)
+    print("DELETE FILE: ", file)
     if file in files:
         os.remove(file)
 
@@ -20,7 +22,7 @@ if files == []:
 for file in files:
     print("<h4>filename:",file,"</h4>")
     print(f'''
-    <form action="/test/watch_files.py" id="Form" enctype="application/x-www-form-urlencoded" method="post">
+    <form action="watch_files.py" id="Form" enctype="application/x-www-form-urlencoded" method="post">
         <input id="keyinpgetall" name="delete" value="{file}" hidden="hidden">
         <input type="submit" value="Delete this file">
     </form>
@@ -30,4 +32,4 @@ for file in files:
         while line := f.readline():
             for i in [["\"","\\&quot;"], ["<","&lt;"], [">","&gt;"]]:
                 line = str(line).replace(i[0],i[1])
-            print(line)
+            print(line+'</br>')
