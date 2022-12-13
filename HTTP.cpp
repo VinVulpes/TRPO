@@ -67,9 +67,8 @@ void HTTP::send(){
     // set headers
     fprintf(stdout, "Content-Type: text/html; charset=utf-8\n");
     // set cookie
-    fprintf(stdout, "Set-Cookie: ");
     for (const auto& [key, value] : this->outcookie){
-        fprintf(stdout, "%s=%s; ", key.c_str(), value.c_str());
+        fprintf(stdout, "Set-Cookie:  %s=%s; ", key.c_str(), value.c_str());
     }
     fprintf(stdout, "\n\n");
     // output recorded cout
