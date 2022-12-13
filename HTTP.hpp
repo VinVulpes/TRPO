@@ -15,6 +15,7 @@ class HTTP
 		int error; 	// код ошибки (0, если нет)
 		int size; 	// размер загружаемого файла
 	} UploadedFile;
+	std::map<std::string, int> INTCONFIG = {{"MAX_FILESIZE",2048}};
 
     std::map<std::string, std::string> getparams;
     std::map<std::string, std::string> postparams;

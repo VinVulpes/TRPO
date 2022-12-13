@@ -126,10 +126,10 @@ HTTP::HTTP(){
             std::getline(strstm, boundary); // get boundary
             int flag = 100;
             int tmpfd = -1;
+            std::string name;
+            std::string filename;
             while (flag)
             {
-                std::string name;
-                std::string filename;
                 std::string ContentType[2];
                 std::getline(std::cin, val);
                 long long int fs = 0;
@@ -155,6 +155,8 @@ HTTP::HTTP(){
                     std::getline(std::cin, val,'\n'); // skip empty line
 
                     filesData[name].filename=filename;
+                    filesData[name].size = 0;
+                    filesData[name].error = 0;
                     //Create temp file
                     char tmpfilename[] = "/tmp/HTTPtemp_XXXXXX";
                     tmpfd = mkstemp(tmpfilename);
@@ -171,6 +173,11 @@ HTTP::HTTP(){
                     }
                     if(tmpfd != -1){
                     write(tmpfd, (val+'\n').c_str(), val.size()+1);
+                    filesData[name].size += val.size()+1;
+                    if(filesData[name].size > INTCONFIG["MAX_FILESIZE"]){
+                        filesData[name].error = -1;
+                        break;
+                    }
                     // fprintf(fp,"%s %li\n",val.c_str(),val.size());
                     }
                 }

@@ -25,11 +25,16 @@ int main()
         auto key = (*i).first;
         auto val = (*i).second;
         // cout << key <<endl;
+        if(val.error == -1){
+            cout <<" filename:"<<val.filename<<" size:" << (val.size)<< " is bigger then MAX FILE SIZE: "<<http.INTCONFIG["MAX_FILESIZE"] << " bytes</br>";
+            unlink(val.tmp_name.c_str());
+            continue;
+        }
         int res = http.move_uploaded_file(val,"./usrfiles/"+val.filename);
         // int res = http.move_uploaded_file(val,"/tmp/"+val.filename);
         if(res != 0){
             std::cout << strerror(errno)<<" ";
-            cout <<res<<" "<<val.filename+" ";
+            cout <<res<<" filename:"<<val.filename<<" size:" << (val.size) << "</br>";
             unlink(val.tmp_name.c_str());
         }
     }
