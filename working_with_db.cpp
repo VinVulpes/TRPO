@@ -32,7 +32,7 @@ int main()
             if (i > 0){
                 cout << ", ";
             }
-            cout << "\"" << http.escaping(http.rawURLDecode(key)) << "\": \"" << http.escaping(http.rawURLDecode(val)) << "\"";
+            cout << "\"" << http.escaping(key) << "\": \"" << http.escaping(val) << "\"";
             i++;
         }
         cout << "}";

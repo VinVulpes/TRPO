@@ -33,7 +33,7 @@ while True:
     except EOFError:
         break
     contents.append(line)
-print('content: ')
+print('content: <br>')
 for i in contents:
     print(i+'<br>')
     # if()

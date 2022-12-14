@@ -250,25 +250,11 @@ std::string HTTP::rawURLDecode(std::string str)
 	}
       if (str[i] == '%')
 	{
-	  i++; //skip '%'
-	  //G cout <<": " << hex << CCtoI(str[i],str[i + 1]) << endl;
-	  if (CCtoI(str[i],str[i + 1]) < 127)
-	    {
-	      res.append(1, char(CCtoI(str[i],str[i + 1])));
-	      //cout <<"1: " << res.back()<<endl;
-	      i++; //skip one hex (other hex will be skiped by i++ in for)
-	      continue;
-	    }
-	    //cout <<"t "<<(CCtoI(str[i],str[i + 1])&0b11100000)<<"\n";
-	  if ((CCtoI(str[i],str[i + 1])&0b11100000) == 0b11000000)
-	    {
-	      
-	      res.append(1, char(CCtoI(str[i],str[i + 1])));
-	      i = i+3; //skip (XX%): 2 hex numbers and '%' 
-	      res.append(1, char(CCtoI(str[i],str[i + 1])));
-	      i++; //skip one hex (other hex will be skiped by i++ in for)
-	      continue;
-	    }
+	    i++; //skip '%'
+        res.append(1, char(CCtoI(str[i],str[i + 1])));
+        //cout <<"1: " << res.back()<<endl;
+        i++; //skip one hex (other hex will be skiped by i++ in for)
+        continue;
 	}
     }
   return res;
