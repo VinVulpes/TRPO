@@ -2,8 +2,8 @@
 rem send files to server by ftp
 set ftpscenario=%temp%\ftpscen.txt
 call :genscen > %ftpscenario%
-REM ftp -i -s:%ftpscenario%
-REM del %ftpscenario%
+ftp -i -s:%ftpscenario%
+del %ftpscenario%
 pause
 exit 0
 :genscen
@@ -28,6 +28,7 @@ echo %ftppass%
 exit
 )
 echo cd y9017159.beget.tech/public_html/cgi/
-echo mput C:\Users\qwert\Desktop\Programms\C++_apache2_volume\*.cgi
+echo mput *.cgi
+echo mput *.py
 echo quit
 exit /b
