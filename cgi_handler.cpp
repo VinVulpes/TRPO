@@ -55,5 +55,5 @@ int main()
     }
 
     http.send();
-    return -1;
+    return 0;
 }

@@ -4,8 +4,10 @@ import os
 print("Content-Type: text/html; charset=utf-8\r\n\r\n")
 print()
 print('''
-<a href="./">Наверх</a>
-<p>Загрузите файлы, чтобы посмотреть как выглядит запрос</p>
+<!DOCTYPE html>
+<meta charset="utf-8" />
+<a href="./">Up</a>
+<p>Upload files</p>
 <form action="test.py" method="POST" enctype="multipart/form-data">
 	<input type="file" name="myFile1">
     <br>
@@ -13,14 +15,14 @@ print('''
 	<input type="file" name="myFile2">
     <br>
     <br>
-	<input type="submit" value="Загрузить">
+	<input type="submit" value="Upload">
 </form>
 ''')
 print(os.getenv('HTTP_USER_AGENT'))
 print('<br>')
-print(os.environ.get('SERVER_NAME'))
+print("REQUEST_METHOD: ",os.environ.get('REQUEST_METHOD'))
 print('<br>')
-print(os.environ.get('PATH_INFO'))
+print("QUERY_STRING: ", os.environ.get('QUERY_STRING'))
 print('<br>')
 print(os.environ.get('HTTP_CONTENT_LENGTH'))
 print('<br>')
@@ -30,6 +32,7 @@ contents = []
 while True:
     try:
         line = input("")
+
     except EOFError:
         break
     contents.append(line)
