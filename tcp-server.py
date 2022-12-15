@@ -128,7 +128,7 @@ def main():
                     data += drecv
                     print("d", drecv)
                     # break
-                    if drecv < 2048:
+                    if len(drecv) < 2048:
                         break
                 if DEBUG:
                     print('Получено: ')
