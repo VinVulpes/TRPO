@@ -8,6 +8,7 @@ import subprocess
 import os
 from http import HTTPStatus
 import mimetypes
+import time
 
 DEBUG = 1
 DEFAULTFILE = '/index.html'
@@ -78,6 +79,8 @@ def parseHeaders(httpdata):
         print(path,end=' ')
     ext = os.path.splitext(path)[-1].lower()
     if ext in CGIEXT:
+        if DEBUG:
+            print("POST to send: ", postdata)
         code, result_data = run_cgi(ext, SEARCHPATH+path, postdata)
     else:
         code, result_data = send_file(SEARCHPATH+path)
@@ -150,8 +153,11 @@ def main():
             while True:
                 datamas = []
                 data = b''
+                # drecv = connection.recv(2048)
+                # data += drecv
                 while True:
                     drecv = connection.recv(2048)
+                    time.sleep(0.5)
                     data += drecv
                     if DEBUG:
                         print("d", drecv)
@@ -166,18 +172,15 @@ def main():
                 if data:
                     print('...',end=' ',flush=True)
                     code, senddata = parseHeaders(data.decode())
-                    # data = data.upper()
                     print('>>>>',end=' ',flush=True)
                     # HTTP/1.1 200 OK
                     retdata =  HTTPVER+' '+str(code.value)+' '+code.phrase+'\n'
                     retdata = retdata.encode('utf8')
                     retdata += senddata
-                    # print(retdata)
                     print(code.value,code.phrase,end=' ')
                     connection.sendall(retdata)
                     if DEBUG:
                         print(f'SEND: {len(retdata)}',flush=True)
-                    # connection.sendall(defsenddata.encode('utf8'))
                     print()
                     break
                 else:
@@ -185,7 +188,6 @@ def main():
                     break
 
         finally:
-            # Очищаем соединение
             connection.close()
 if __name__ == "__main__":
     while True:
