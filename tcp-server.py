@@ -47,18 +47,30 @@ def parseHeaders(httpdata):
     else:
         path = url
         getparams = ''
+    if path == '/exit':
+        print("Server stopped")
+        exit()
     os.environ['QUERY_STRING'] = getparams
+    env = {}
     postdata = ''
     flag_post = 0
     # print("http:", httpdata)
     for i in httpdata:
         if flag_post:
-            postdata += i
+            postdata += i+'\n'
         elif i == '':
             flag_post=1
+        else:
+            if ':' in i:
+                env_key, env_value = i.split(":", maxsplit = 1) # User-Agent: Mozilla/5.0
+                env_key = env_key.upper().replace("-","_") # User-Agent to USER_AGENT
+                env_value = env_value[1:] # rem leading whitespace
+                env[env_key] = env_value
+                os.environ[env_key] = env_value
+    # print(env)
     if os.path.isdir(SEARCHPATH+path):
         path += DEFAULTFILE
-    # else:
+    # else: loc:5000/ 
         # path = path
     if DEBUG:
         print('REQUESTING FILE: ', path.encode())
@@ -76,7 +88,7 @@ def run_cgi(ext, path, postdata):
     if sys.platform == 'linux':
         sb = subprocess.Popen(path,stdout=subprocess.PIPE,stdin=subprocess.PIPE,
                               stderr=subprocess.PIPE, env=my_env)
-        out, err = sb.communicate()
+        out, err = sb.communicate(input=bytes(postdata,encoding='utf8'))
     elif sys.platform == 'win32':
         if ext == '.py':
             print("CGI PYTHON")
@@ -84,7 +96,7 @@ def run_cgi(ext, path, postdata):
                                   stderr=subprocess.PIPE, env=my_env)
             # sb = subprocess.Popen(PYTHON+' '+path,stdout=subprocess.PIPE,
             # stdin=subprocess.PIPE,stderr=subprocess.PIPE, env=my_env)
-            out, err = sb.communicate()
+            out, err = sb.communicate(input = bytes(postdata,encoding='utf8'))
             # out = out.encode('utf8')
         else:
             # path = path.replace('/','\\')
@@ -92,16 +104,16 @@ def run_cgi(ext, path, postdata):
             sb = subprocess.Popen('wsl'+' '+path, shell=True,stdout=subprocess.PIPE,stdin=subprocess.PIPE,
                                   stderr=subprocess.PIPE,env=my_env)
             # sb = subprocess.Popen('wsl'+' '+path, shell=True,stdout=subprocess.PIPE,stdin=subprocess.PIPE,stderr=subprocess.PIPE,env=my_env)
-            out, err = sb.communicate(input=b'inp\nlsl\0')
+            out, err = sb.communicate(input=bytes(postdata,encoding='utf8'))
 
     print("CGI")
     if sb.returncode == 0:
         ret = out
-        print(ret)
+        # print(ret)
         return HTTPStatus.OK, ret
     else:
         print("errorlog:", err)
-        return HTTPStatus.INTERNAL_SERVER_ERROR, b' '
+        return HTTPStatus.INTERNAL_SERVER_ERROR, b' '+bytes(sb.returncode)
 
 def send_file(path):
     mime = mimetypes.guess_type(path)[0]
@@ -117,7 +129,7 @@ def send_file(path):
     return HTTPStatus.OK, b'Content-Type: '+bytes(mime,encoding='utf8')+b'; charset=UTF-8\r\n\r\n'+filedata
 
 def main():
-    # создаемTCP/IP сокет
+    # создаем TCP/IP сокет
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
     # Привязываем сокет к порту
@@ -141,7 +153,8 @@ def main():
                 while True:
                     drecv = connection.recv(2048)
                     data += drecv
-                    print("d", drecv)
+                    if DEBUG:
+                        print("d", drecv)
                     # break
                     if len(drecv) < 2048:
                         break
