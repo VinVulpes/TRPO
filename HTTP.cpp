@@ -70,6 +70,7 @@ void HTTP::send(){
     for (const auto& [key, value] : this->outcookie){
         fprintf(stdout, "Set-Cookie:  %s=%s; ", key.c_str(), value.c_str());
     }
+    // fprintf(stdout, "\r\n\r\n");
     fprintf(stdout, "\n\n");
     // output recorded cout
     fprintf(stdout, "%s", OUT.str().c_str());
