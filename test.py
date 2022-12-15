@@ -1,9 +1,9 @@
 #!/usr/bin/python3
 import os
 
-print("Content-Type: text/html; charset=utf-8\r\n\r\n")
+print("Content-Type: text/html; charset=utf-8")
 print()
-print('''
+print('''\
 <!DOCTYPE html>
 <meta charset="utf-8" />
 <a href="./">Up</a>
