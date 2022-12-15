@@ -49,13 +49,13 @@ def parseHeaders(httpdata):
         getparams = ''
     os.environ['QUERY_STRING'] = getparams
     postdata = ''
-    fl = 0
-    print("http:", httpdata)
+    flag_post = 0
+    # print("http:", httpdata)
     for i in httpdata:
-        if fl:
+        if flag_post:
             postdata += i
         elif i == '':
-            fl=1
+            flag_post=1
     if os.path.isdir(SEARCHPATH+path):
         path += DEFAULTFILE
     # else:
@@ -66,11 +66,11 @@ def parseHeaders(httpdata):
         print(path,end=' ')
     ext = os.path.splitext(path)[-1].lower()
     if ext in CGIEXT:
-        code, result_data = run_cgi(ext, SEARCHPATH+path)
+        code, result_data = run_cgi(ext, SEARCHPATH+path, postdata)
     else:
         code, result_data = send_file(SEARCHPATH+path)
     return code, result_data
-def run_cgi(ext, path):
+def run_cgi(ext, path, postdata):
     print("ext ",ext)
     my_env = os.environ.copy()
     if sys.platform == 'linux':
@@ -136,9 +136,20 @@ def main():
             print('\r            \r> ', client_address, end=' ')
             # Принимаем данные порциями и ретранслируем их
             while True:
-                data = connection.recv(1024)
+                datamas = []
+                data = b''
+                while True:
+                    drecv = connection.recv(2048)
+                    data += drecv
+                    print("d", drecv)
+                    # break
+                    if drecv < 2048:
+                        break
                 if DEBUG:
-                    print(f'Получено: \n{data.decode()}\nEND\n',flush=True)
+                    print('Получено: ')
+                    for i in datamas:
+                        print(i)
+                    print('END\n',flush=True)
                 if data:
                     print('...',end=' ',flush=True)
                     code, senddata = parseHeaders(data.decode())
