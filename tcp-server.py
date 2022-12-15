@@ -80,7 +80,7 @@ def run_cgi(ext, path, postdata):
     elif sys.platform == 'win32':
         if ext == '.py':
             print("CGI PYTHON")
-            sb = subprocess.Popen(path,stdout=subprocess.PIPE,stdin=subprocess.PIPE,
+            sb = subprocess.Popen(PYTHON+' '+path,stdout=subprocess.PIPE,stdin=subprocess.PIPE,
                                   stderr=subprocess.PIPE, env=my_env)
             # sb = subprocess.Popen(PYTHON+' '+path,stdout=subprocess.PIPE,
             # stdin=subprocess.PIPE,stderr=subprocess.PIPE, env=my_env)
@@ -89,7 +89,7 @@ def run_cgi(ext, path, postdata):
         else:
             # path = path.replace('/','\\')
             print('path ',path)
-            sb = subprocess.Popen(path, shell=True,stdout=subprocess.PIPE,stdin=subprocess.PIPE,
+            sb = subprocess.Popen('wsl'+' '+path, shell=True,stdout=subprocess.PIPE,stdin=subprocess.PIPE,
                                   stderr=subprocess.PIPE,env=my_env)
             # sb = subprocess.Popen('wsl'+' '+path, shell=True,stdout=subprocess.PIPE,stdin=subprocess.PIPE,stderr=subprocess.PIPE,env=my_env)
             out, err = sb.communicate(input=b'inp\nlsl\0')
