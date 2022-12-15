@@ -14,7 +14,11 @@ DEFAULTFILE = '/index.html'
 SEARCHPATH = '.'
 CGIEXT = ['.cgi','.py']
 HTTPVER = 'HTTP/1.1'
-PYTHON = 'py'
+if sys.platform == "linux":
+    PYTHON = 'python3'
+elif sys.platform == "win32":
+    PYTHON = 'py'
+
 # PYTHON = 'python3'
 DEF404SENDDATA = '''
 HTTP/1.1 404 OK
@@ -69,16 +73,26 @@ def parseHeaders(httpdata):
 def run_cgi(ext, path, postdata):
     print("ext ",ext)
     my_env = os.environ.copy()
-    if ext == '.py':
-        print("CGI PYTHON")
-        sb = subprocess.Popen(PYTHON+' '+path,stdout=subprocess.PIPE,stdin=subprocess.PIPE,stderr=subprocess.PIPE, env=my_env)
-        out, err = sb.communicate(input = bytes(postdata,encoding='utf8'))
-        # out = out.encode('utf8')
-    else:
-        # path = path.replace('/','\\')
-        print('path ',path)
-        sb = subprocess.Popen('wsl'+' '+path, shell=True,stdout=subprocess.PIPE,stdin=subprocess.PIPE,stderr=subprocess.PIPE,env=my_env)
-        out, err = sb.communicate(input=b'inp\nlsl\0')
+    if sys.platform == 'linux':
+        sb = subprocess.Popen(path,stdout=subprocess.PIPE,stdin=subprocess.PIPE,
+                              stderr=subprocess.PIPE, env=my_env)
+        out, err = sb.communicate()
+    elif sys.platform == 'win32':
+        if ext == '.py':
+            print("CGI PYTHON")
+            sb = subprocess.Popen(path,stdout=subprocess.PIPE,stdin=subprocess.PIPE,
+                                  stderr=subprocess.PIPE, env=my_env)
+            # sb = subprocess.Popen(PYTHON+' '+path,stdout=subprocess.PIPE,
+            # stdin=subprocess.PIPE,stderr=subprocess.PIPE, env=my_env)
+            out, err = sb.communicate()
+            # out = out.encode('utf8')
+        else:
+            # path = path.replace('/','\\')
+            print('path ',path)
+            sb = subprocess.Popen(path, shell=True,stdout=subprocess.PIPE,stdin=subprocess.PIPE,
+                                  stderr=subprocess.PIPE,env=my_env)
+            # sb = subprocess.Popen('wsl'+' '+path, shell=True,stdout=subprocess.PIPE,stdin=subprocess.PIPE,stderr=subprocess.PIPE,env=my_env)
+            out, err = sb.communicate(input=b'inp\nlsl\0')
 
     print("CGI")
     if sb.returncode == 0:
@@ -101,13 +115,14 @@ def send_file(path):
     except FileNotFoundError:
         return HTTPStatus.NOT_FOUND, b' '
     return HTTPStatus.OK, b'Content-Type: '+bytes(mime,encoding='utf8')+b'; charset=UTF-8\r\n\r\n'+filedata
+
 def main():
     # создаемTCP/IP сокет
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
     # Привязываем сокет к порту
     server_address = ('localhost', 5000)
-    print('Старт сервера на {} порт {}'.format(*server_address))
+    print(f'Старт сервера на {server_address[0]} порт {server_address[1]}')
     sock.bind(server_address)
 
     # Слушаем входящие подключения

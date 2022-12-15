@@ -1,5 +1,7 @@
 #ifndef __HTTP_CPP_CLASS__
 #define __HTTP_CPP_CLASS__
+#include "HTTP.hpp"
+#include <unistd.h>
 #include <iostream>
 #include <vector>
 #include <string>
@@ -8,14 +10,9 @@
 #include <sstream>
 #include <fstream>
 #include <map>
-#include <unistd.h>
-#include <iostream>
 #include <cstdio>
-#include <cstring>
 #include <cerrno>
-// #include <stdlib.h>
 #include <cstdlib>
-#include "HTTP.hpp"
 /*
 Removing a leading whitespace
 */
@@ -32,7 +29,7 @@ std::string & ltrim(std::string * str)
 }
 std::string ReplaceAll(std::string str, const std::string& from, const std::string& to) {
     size_t start_pos = 0;
-    while((start_pos = str.find(from, start_pos)) != std::string::npos) {
+    while ((start_pos = str.find(from, start_pos)) != std::string::npos) {
         str.replace(start_pos, from.length(), to);
         start_pos += to.length();
     }
@@ -42,7 +39,7 @@ std::string HTTP::escaping(std::string str)
 {
     // for()
     for (auto [key, val] : this->escape){
-        str = ReplaceAll(str,key,val);
+        str = ReplaceAll(str, key, val);
     }
     return str;
 }
@@ -95,7 +92,7 @@ HTTP::HTTP(std::string query, std::string postdata){
 return;
 }
 HTTP::HTTP(){
-    FILE * fp = fopen("err.txt","w");
+    FILE * fp = fopen("err.txt", "w");
     std::stringstream getstrstm(getenv("QUERY_STRING"));
     auto key = std::string{};
     auto val = std::string{};
@@ -120,11 +117,11 @@ HTTP::HTTP(){
         UploadedFile upf;
         std::string boundary;
         std::stringstream strstm(getenv("CONTENT_TYPE"));
-        std::getline(strstm, val, ';'); //Get Content-Type
+        std::getline(strstm, val, ';');  // Get Content-Type
         // fprintf(fp,"%s\n",val.c_str());
-        if(val == "multipart/form-data"){
-            std::getline(strstm,val,'='); //skip " boundary="
-            std::getline(strstm, boundary); // get boundary
+        if (val == "multipart/form-data"){
+            std::getline(strstm, val, '=');  // skip " boundary="
+            std::getline(strstm, boundary);  // get boundary
             int flag = 100;
             int tmpfd = -1;
             std::string name;
@@ -135,47 +132,47 @@ HTTP::HTTP(){
                 std::getline(std::cin, val);
                 long long int fs = 0;
                 // fprintf(fp,"%s\n",val.c_str());
-                
-                if(ltrim(&val) == ("--"+boundary)){
+
+                if (ltrim(&val) == ("--" + boundary)){
                     if (tmpfd != -1){
                         close(tmpfd);
                     }
 
-                    std::getline(std::cin, val,'\"'); // SKIP Content-Disposition: form-data; name="
-                    std::getline(std::cin, name,'\"'); // get name
+                    std::getline(std::cin, val, '\"');  // SKIP Content-Disposition: form-data; name="
+                    std::getline(std::cin, name, '\"');  // get name
                     // fprintf(fp,"n %s\n",name.c_str());
-                    std::getline(std::cin, val,'\"'); // SKIP "; filename="
-                    std::getline(std::cin, filename,'\"'); // get filename
+                    std::getline(std::cin, val, '\"');  // SKIP "; filename="
+                    std::getline(std::cin, filename, '\"');  // get filename
                     // fprintf(fp,"fn %s\n",filename.c_str());
-                    std::getline(std::cin, val,'\n'); // skip '"\n'
-                    std::getline(std::cin, val,' '); // skip "Content-Type: "
-                    std::getline(std::cin, ContentType[0],'/'); // get content type before '/'
+                    std::getline(std::cin, val, '\n');  // skip '"\n'
+                    std::getline(std::cin, val, ' ');  // skip "Content-Type: "
+                    std::getline(std::cin, ContentType[0], '/');  // get content type before '/'
                     // fprintf(fp,"CT %s\n",ContentType[0].c_str());
-                    std::getline(std::cin, ContentType[1],'\n'); // get content type
-                    filesData[name].type=ContentType[0];
-                    std::getline(std::cin, val,'\n'); // skip empty line
+                    std::getline(std::cin, ContentType[1], '\n');  // get content type
+                    filesData[name].type = ContentType[0];
+                    std::getline(std::cin, val, '\n');  // skip empty line
 
-                    filesData[name].filename=filename;
+                    filesData[name].filename = filename;
                     filesData[name].size = 0;
                     filesData[name].error = 0;
-                    //Create temp file
+                    // Create temp file
                     char tmpfilename[] = "/tmp/HTTPtemp_XXXXXX";
                     tmpfd = mkstemp(tmpfilename);
                     if (tmpfd == -1){
                     // fprintf(fp,"%i\n",tmpfd);
                     }
                     // fprintf(fp,"%s\n",tmpfilename);
-                    filesData[name].tmp_name=tmpfilename;
+                    filesData[name].tmp_name = tmpfilename;
                     // unlink(filename);              // Delete the temporary file.
                 }else{
-                    if(ltrim(&val) == ("--"+ boundary+"--")){ // Exit if end 
+                    if (ltrim(&val) == ("--" + boundary + "--")){  // Exit if end
                         // fprintf(fp,"e\n");
                         break;
                     }
-                    if(tmpfd != -1){
+                    if (tmpfd != -1){
                     write(tmpfd, (val+'\n').c_str(), val.size()+1);
                     filesData[name].size += val.size()+1;
-                    if(filesData[name].size > INTCONFIG["MAX_FILESIZE"]){
+                    if (filesData[name].size > INTCONFIG["MAX_FILESIZE"]){
                         filesData[name].error = -1;
                         break;
                     }
@@ -185,7 +182,7 @@ HTTP::HTTP(){
                 // flag--;
             }
         }else{
-            if(val == "application/x-www-form-urlencoded"){
+            if (val == "application/x-www-form-urlencoded"){
                     // parse POST params
                 std::string postdata;
                 std::getline(std::cin, postdata, static_cast<char>(0));
@@ -196,7 +193,6 @@ HTTP::HTTP(){
                 }
             }
         }
-
     }
     return;
 }
@@ -209,10 +205,10 @@ int HTTP::move_uploaded_file(UploadedFile tmpFile, std::string path){
     // return system(("ls 1>/dev/null"));
     std::ifstream  src(tmpFile.tmp_name, std::ios::binary);
     std::ofstream  dst(path,   std::ios::binary);
-    if(!src.is_open()){
+    if (!src.is_open()){
         return -1;
     }
-    if(!dst.is_open()){
+    if (!dst.is_open()){
         return -2;
     }
     dst << src.rdbuf();
@@ -240,21 +236,17 @@ HTTP::~HTTP(){
 std::string HTTP::rawURLDecode(std::string str)
 {
   std::string res = "";
-  //cout << str.length () << endl;
   for (int i = 0; i < str.length (); i++)
     {
-
       if (str[i] != '%')
 	{
-	  res.append (1, str[i]);
-	  //cout <<"0: " << res.back()<<endl;
+	  res.append(1, str[i]);
 	}
       if (str[i] == '%')
 	{
-	    i++; //skip '%'
-        res.append(1, char(CCtoI(str[i],str[i + 1])));
-        //cout <<"1: " << res.back()<<endl;
-        i++; //skip one hex (other hex will be skiped by i++ in for)
+	    i++;  // skip '%'
+        res.append(1, static_cast<char>(CCtoI(str[i], str[i + 1])));
+        i++;  // skip one hex (other hex will be skiped by i++ in for)
         continue;
 	}
     }
@@ -262,16 +254,15 @@ std::string HTTP::rawURLDecode(std::string str)
 }
 
 unsigned int HTTP::CtoI(char ch){
-    if(ch >= 'A'){
-	      return int(ch - 'A' + 10);
-	  }
-	  else{
-	      return int(ch - '0');
+    if (ch >= 'A'){
+	      return static_cast<int>(ch - 'A' + 10);
+	  }else{
+	      return static_cast<int>(ch - '0');
 	  }
 }
 
 unsigned int HTTP::CCtoI(char ch1, char ch2){
-    return ((CtoI(ch1)<<4) + CtoI(ch2));
+    return ((CtoI(ch1) << 4) + CtoI(ch2));
 }
 
 
