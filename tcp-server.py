@@ -121,7 +121,7 @@ def main():
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
     # Привязываем сокет к порту
-    server_address = ('localhost', 5000)
+    server_address = ('0.0.0.0', 5000)
     print(f'Старт сервера на {server_address[0]} порт {server_address[1]}')
     sock.bind(server_address)
 
