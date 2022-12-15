@@ -20,7 +20,6 @@ if sys.platform == "linux":
 elif sys.platform == "win32":
     PYTHON = 'py'
 
-# PYTHON = 'python3'
 DEF404SENDDATA = '''
 HTTP/1.1 404 OK
 Content-Type: text/html; charset=utf-8
@@ -55,7 +54,6 @@ def parseHeaders(httpdata):
     env = {}
     postdata = ''
     flag_post = 0
-    # print("http:", httpdata)
     for i in httpdata:
         if flag_post:
             postdata += i+'\n'
@@ -68,11 +66,8 @@ def parseHeaders(httpdata):
                 env_value = env_value[1:] # rem leading whitespace
                 env[env_key] = env_value
                 os.environ[env_key] = env_value
-    # print(env)
     if os.path.isdir(SEARCHPATH+path):
         path += DEFAULTFILE
-    # else: loc:5000/ 
-        # path = path
     if DEBUG:
         print('REQUESTING FILE: ', path.encode())
     else:
@@ -97,22 +92,16 @@ def run_cgi(ext, path, postdata):
             print("CGI PYTHON")
             sb = subprocess.Popen(PYTHON+' '+path,stdout=subprocess.PIPE,stdin=subprocess.PIPE,
                                   stderr=subprocess.PIPE, env=my_env)
-            # sb = subprocess.Popen(PYTHON+' '+path,stdout=subprocess.PIPE,
-            # stdin=subprocess.PIPE,stderr=subprocess.PIPE, env=my_env)
             out, err = sb.communicate(input = bytes(postdata,encoding='utf8'))
-            # out = out.encode('utf8')
         else:
-            # path = path.replace('/','\\')
             print('path ',path)
             sb = subprocess.Popen('wsl'+' '+path, shell=True,stdout=subprocess.PIPE,stdin=subprocess.PIPE,
                                   stderr=subprocess.PIPE,env=my_env)
-            # sb = subprocess.Popen('wsl'+' '+path, shell=True,stdout=subprocess.PIPE,stdin=subprocess.PIPE,stderr=subprocess.PIPE,env=my_env)
             out, err = sb.communicate(input=bytes(postdata,encoding='utf8'))
 
     print("CGI")
     if sb.returncode == 0:
         ret = out
-        # print(ret)
         return HTTPStatus.OK, ret
     else:
         print("errorlog:", err)
@@ -132,24 +121,19 @@ def send_file(path):
     return HTTPStatus.OK, b'Content-Type: '+bytes(mime,encoding='utf8')+b'; charset=UTF-8\r\n\r\n'+filedata
 
 def main():
-    # создаем TCP/IP сокет
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-    # Привязываем сокет к порту
     server_address = ('0.0.0.0', 5000)
     print(f'Старт сервера на {server_address[0]} порт {server_address[1]}')
     sock.bind(server_address)
 
-    # Слушаем входящие подключения
     sock.listen(1)
 
     while True:
-        # ждем соединения
         print('waiting...',end='',flush=True)
         connection, client_address = sock.accept()
         try:
             print('\r            \r> ', client_address, end=' ')
-            # Принимаем данные порциями и ретранслируем их
             while True:
                 datamas = []
                 data = b''
@@ -161,7 +145,6 @@ def main():
                     data += drecv
                     if DEBUG:
                         print("d", drecv)
-                    # break
                     if len(drecv) < 2048:
                         break
                 if DEBUG:
