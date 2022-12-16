@@ -122,7 +122,7 @@ HTTP::HTTP(){
         if (val == "multipart/form-data"){
             std::getline(strstm, val, '=');  // skip " boundary="
             std::getline(strstm, boundary);  // get boundary
-            int flag = 100;
+            int flag = 100000;
             int tmpfd = -1;
             std::string name;
             std::string filename;
@@ -130,6 +130,10 @@ HTTP::HTTP(){
             {
                 std::string ContentType[2];
                 std::getline(std::cin, val);
+                if(std::cin.eof()){
+                    fprintf(fp,"ERROR: end of cin!!\n");
+                    return;
+                }
                 long long int fs = 0;
                 // fprintf(fp,"%s\n",val.c_str());
 
@@ -179,7 +183,10 @@ HTTP::HTTP(){
                     // fprintf(fp,"%s %li\n",val.c_str(),val.size());
                     }
                 }
-                // flag--;
+                flag--; //Stop if > 100000 lines
+                if(!flag){
+                    fprintf(fp,"max count!\n");
+                }
             }
         }else{
             if (val == "application/x-www-form-urlencoded"){
