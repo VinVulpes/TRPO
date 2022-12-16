@@ -9,8 +9,9 @@ import os
 from http import HTTPStatus
 import mimetypes
 import time
+import datetime
 
-DEBUG = 1
+DEBUG = 0
 DEFAULTFILE = '/index.html'
 SEARCHPATH = '.'
 CGIEXT = ['.cgi','.py']
@@ -31,13 +32,24 @@ Content-Type: text/html; charset=utf-8
 </body>
 </html>
 '''
+
+def getMainHeader(httpdata):
+    '''
+    get "GET", "/index.py?a=b","HTTP/1.1"
+    '''
+    httpdata = httpdata.replace('\r', '')
+    httpdata = httpdata.split('\n')
+    return httpdata[0].split(' ')
+
 def parseHeaders(httpdata):
     '''
     Parsing HTTP Headers
     '''
+    env = {}
     httpdata = httpdata.replace('\r', '')
     httpdata = httpdata.split('\n')
     method,url,version = httpdata[0].split(' ')
+    # method,url,version = getMainHeader(httpdata)
     if version != HTTPVER:
         print(version.encode())
         return HTTPStatus.HTTP_VERSION_NOT_SUPPORTED, b"\r\n\r\n n"
@@ -51,7 +63,6 @@ def parseHeaders(httpdata):
         print("Server stopped")
         exit()
     os.environ['QUERY_STRING'] = getparams
-    env = {}
     postdata = ''
     flag_post = 0
     for i in httpdata:
@@ -71,7 +82,8 @@ def parseHeaders(httpdata):
     if DEBUG:
         print('REQUESTING FILE: ', path.encode())
     else:
-        print(path,end=' ')
+        # NOT DEBUG PRINT method + url
+        print(method, url, end=' ',flush=True)
     ext = os.path.splitext(path)[-1].lower()
     if ext in CGIEXT:
         if DEBUG:
@@ -81,7 +93,8 @@ def parseHeaders(httpdata):
         code, result_data = send_file(SEARCHPATH+path)
     return code, result_data
 def run_cgi(ext, path, postdata):
-    print("ext ",ext)
+    if DEBUG:
+        print("ext ",ext)
     my_env = os.environ.copy()
     if sys.platform == 'linux':
         sb = subprocess.Popen(path,stdout=subprocess.PIPE,stdin=subprocess.PIPE,
@@ -89,22 +102,23 @@ def run_cgi(ext, path, postdata):
         out, err = sb.communicate(input=bytes(postdata,encoding='utf8'))
     elif sys.platform == 'win32':
         if ext == '.py':
-            print("CGI PYTHON")
+            if DEBUG:
+                print("CGI PYTHON")
             sb = subprocess.Popen(PYTHON+' '+path,stdout=subprocess.PIPE,stdin=subprocess.PIPE,
                                   stderr=subprocess.PIPE, env=my_env)
             out, err = sb.communicate(input = bytes(postdata,encoding='utf8'))
         else:
-            print('path ',path)
+            if DEBUG:
+                print('path ',path)
             sb = subprocess.Popen('wsl'+' '+path, shell=True,stdout=subprocess.PIPE,stdin=subprocess.PIPE,
                                   stderr=subprocess.PIPE,env=my_env)
             out, err = sb.communicate(input=bytes(postdata,encoding='utf8'))
-
-    print("CGI")
+    print("CGI",end='')
     if sb.returncode == 0:
         ret = out
         return HTTPStatus.OK, ret
     else:
-        print("errorlog:", err)
+        print("\nerror! log:", err)
         return HTTPStatus.INTERNAL_SERVER_ERROR, b' '+bytes(sb.returncode)
 
 def send_file(path):
@@ -118,7 +132,8 @@ def send_file(path):
             filedata = f.read()
     except FileNotFoundError:
         return HTTPStatus.NOT_FOUND, b' '
-    return HTTPStatus.OK, b'Content-Type: '+bytes(mime,encoding='utf8')+b'; charset=UTF-8\r\n\r\n'+filedata
+    return HTTPStatus.OK, b'Content-Type: '+bytes(mime,encoding='utf8')+b'; charset=UTF-8\r\n\r\n'\
+           +filedata
 
 def main():
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -130,18 +145,22 @@ def main():
     sock.listen(1)
 
     while True:
-        print('waiting...',end='',flush=True)
+        print('waiting connection...',end='',flush=True)
         connection, client_address = sock.accept()
         try:
-            print('\r            \r> ', client_address, end=' ')
+            now = datetime.datetime.now()
+            print(f'\r            \r>{now} ', client_address, end=' ',flush=True)
             while True:
                 datamas = []
                 data = b''
                 # drecv = connection.recv(2048)
-                # data += drecv
+                # method, _, _ = getMainHeader(drecv.decode())
+                # data = drecv
+                # if method != 'GET':
                 while True:
+                    time.sleep(0.5) # waiting browser to send data
                     drecv = connection.recv(2048)
-                    time.sleep(0.5)
+                    # time.sleep(0.5)
                     data += drecv
                     if DEBUG:
                         print("d", drecv)
@@ -160,7 +179,7 @@ def main():
                     retdata =  HTTPVER+' '+str(code.value)+' '+code.phrase+'\n'
                     retdata = retdata.encode('utf8')
                     retdata += senddata
-                    print(code.value,code.phrase,end=' ')
+                    print(code.value,code.phrase, datetime.datetime.now() - now ,end=' ',flush=True)
                     connection.sendall(retdata)
                     if DEBUG:
                         print(f'SEND: {len(retdata)}',flush=True)
