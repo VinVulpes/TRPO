@@ -36,6 +36,8 @@ int main()
             std::cout << strerror(errno)<<" ";
             cout <<res<<" filename:"<<val.filename<<" size:" << (val.size) << "</br>";
             unlink(val.tmp_name.c_str());
+        }else{
+            cout <<res<<" filename:"<<val.filename<<" size:" << (val.size) <<" OK" << "</br>";
         }
     }
     http.send();
