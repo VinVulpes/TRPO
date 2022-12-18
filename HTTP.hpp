@@ -23,7 +23,7 @@ class HTTP
     std::map<std::string, std::string> cookie;
     std::map<std::string, std::string> outcookie;
 	std::map <std::string, UploadedFile> filesData;
-	private:
+	protected:
 	std::map<std::string, std::string> escape = {
 		{"\"","\\&quot;"}, {"<","&lt;"}, {">","&gt;"}
 		};
@@ -57,7 +57,7 @@ class HTTP
 	// загружает файл “tmpFile” в директорию “path”
 	int move_uploaded_file(UploadedFile tmpFile, std::string path); 
 
-	private:
+	protected:
 	// Convert char (A-F,0-9) to int
 	unsigned int CtoI(char a);
 	// Convert two hex char numbers (XX) to int
