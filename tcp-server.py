@@ -21,8 +21,7 @@ if sys.platform == "linux":
 elif sys.platform == "win32":
     PYTHON = 'py'
 
-DEF404SENDDATA = '''
-HTTP/1.1 404 OK
+DEF404SENDDATA = b'''
 Content-Type: text/html; charset=utf-8
 
 
@@ -32,6 +31,8 @@ Content-Type: text/html; charset=utf-8
 </body>
 </html>
 '''
+
+
 
 def getMainHeader(httpdata):
     '''
@@ -84,6 +85,9 @@ def parseHeaders(httpdata):
     else:
         # NOT DEBUG PRINT method + url
         print(method, url, end=' ',flush=True)
+
+    if not os.path.exists(url):
+        return HTTPStatus.NOT_FOUND, DEF404SENDDATA
     ext = os.path.splitext(path)[-1].lower()
     if ext in CGIEXT:
         if DEBUG:
@@ -131,7 +135,7 @@ def send_file(path):
         with(open(path,"rb")) as f:
             filedata = f.read()
     except FileNotFoundError:
-        return HTTPStatus.NOT_FOUND, b' '
+        return HTTPStatus.NOT_FOUND, DEF404SENDDATA
     return HTTPStatus.OK, b'Content-Type: '+bytes(mime,encoding='utf8')+b'; charset=UTF-8\r\n\r\n'\
            +filedata
 
