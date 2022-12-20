@@ -21,13 +21,14 @@ if sys.platform == "linux":
 elif sys.platform == "win32":
     PYTHON = 'py'
 
-DEF404SENDDATA = b'''
+DEF404SENDDATA = b'''\
 Content-Type: text/html; charset=utf-8
 
 
 <html>
 <body>
-<p>Not Found!</p>
+<a href="./">Up</a>
+<p>File Not Found!</p>
 </body>
 </html>
 '''
