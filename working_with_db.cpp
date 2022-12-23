@@ -21,21 +21,29 @@ int main()
         http.setCookie("get", getparam);
         std::string res = db.read_one(getparam);
         if (res != ""){
-            cout <<"{ \"" << http.escaping(getparam) << "\": \"" <<http.escaping(res) << "\"}";
+            std::string outStr_New_01 = "<table><tr><th>Key</th><th>Value</th></tr><tr>";
+            std::string outStr_New_02 = "<td>" + http.escaping(getparam) + "</td><td>" + http.escaping(res) + "</td></tr></table>";
+            //cout <<"{ \"" << http.escaping(getparam) << "\": \"" <<http.escaping(res) << "\"}";
+            cout << outStr_New_01 + outStr_New_02;
         }
     }
     if (getallparam != ""){
         std::map<string, string> *res = db.read_all();
-        cout << "{";
+        //cout << "{";
         int i = 0;
+        std::string outStr_New_01 = "<table><tr><th>Key</th><th>Value</th></tr>";
+        cout << outStr_New_01;
         for (auto [key, val] : *res){
-            if (i > 0){
+            /*if (i > 0){
                 cout << ", ";
-            }
-            cout << "\"" << http.escaping(key) << "\": \"" << http.escaping(val) << "\"";
+            }*/
+            std::string outStr_New_02 = "<tr><td>" + http.escaping(key) + "</td><td>" + http.escaping(val) + "</td></tr>";
+            cout << outStr_New_02;
+            //cout << "\"" << http.escaping(key) << "\": \"" << http.escaping(val) << "\"";
             i++;
         }
-        cout << "}";
+        //cout << "}";
+        cout << "</table>";
     }
     std::string setparam = string(http.httpPost("set"));
     if (setparam != ""){
