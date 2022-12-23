@@ -21,7 +21,7 @@ int main()
         http.setCookie("get", getparam);
         std::string res = db.read_one(getparam);
         if (res != ""){
-            std::string outStr_New_01 = "<table><tr><th>Key</th><th>Value</th></tr><tr>";
+            std::string outStr_New_01 = "<table><tr><th>Key</th><th>Value</th><th>Delete</th></tr>";
             std::string outStr_New_02 = "<td>" + http.escaping(getparam) + "</td><td>" + http.escaping(res) + "</td></tr></table>";
             //cout <<"{ \"" << http.escaping(getparam) << "\": \"" <<http.escaping(res) << "\"}";
             cout << outStr_New_01 + outStr_New_02;
@@ -31,16 +31,19 @@ int main()
         std::map<string, string> *res = db.read_all();
         //cout << "{";
         int i = 0;
-        std::string outStr_New_01 = "<table><tr><th>Key</th><th>Value</th></tr>";
+        std::string outStr_New_01 = "<table><tr><th>Key</th><th>Value</th><th>Delete</th></tr>";
         cout << outStr_New_01;
         for (auto [key, val] : *res){
             /*if (i > 0){
                 cout << ", ";
             }*/
-            std::string outStr_New_02 = "<tr><td>" + http.escaping(key) + "</td><td>" + http.escaping(val) + "</td></tr>";
+            std::string outStr_New_02 = "<tr><td>" + http.escaping(key) + "</td><td>" + http.escaping(val) + "</td>";
             cout << outStr_New_02;
             //cout << "\"" << http.escaping(key) << "\": \"" << http.escaping(val) << "\"";
             i++;
+            cout << "<td><form enctype=\"application/x-www-form-urlencoded\" method=\"post\"><input id=\"keyinpgetall\" name=\"erase\" value=\"";
+            cout << key;
+            cout << "\" hidden=\"hidden\"><input type=\"submit\" value=\"Delete this line\"></form></td></tr>";
         }
         //cout << "}";
         cout << "</table>";
@@ -55,9 +58,20 @@ int main()
             cout << "{\"status\": [500, \"Server Error\"]}";
         }
     }
+    
+    // std::string eraseparam = string(http.httpPost("erase"));
+    // if (eraseparam != ""){
+    //     int res = db.erase(http.rawURLDecode(eraseparam));
+    //     if (res == 0){
+    //         cout << "{\"status\": [201, \"OK\"]}";
+    //     }else{
+    //         cout << "{\"status\": [500, \"Server Error\"]}";
+    //     }
+    // }
+    
     std::string eraseparam = string(http.httpPost("erase"));
+    int res = db.erase(http.rawURLDecode(eraseparam));
     if (eraseparam != ""){
-        int res = db.erase(http.rawURLDecode(eraseparam));
         if (res == 0){
             cout << "{\"status\": [201, \"OK\"]}";
         }else{

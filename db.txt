@@ -4,10 +4,8 @@ key11=11
 key2=value2
 key3=2
 name=value
+space=notSPACE
 test=data
 test2=data2
-val=10
-Привет=Андрей
-
 xexe=not+xexe
-space=notSPACE
+ПавелВаня=ТРПОиВычСистемы
